@@ -16,26 +16,37 @@
 
 import XCTest
 import SwiftOGG
+import AVFoundation
 
 class ConverterTests: XCTestCase {
 
     func testConversionRoundTrip() {
-        let url = Bundle.module.url(forResource: "VoiceRecordingWeb", withExtension: "m4a")!
-        let destUrl = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.ogg")
-        let dest2Url = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.m4a")
+        let src = Bundle.module.url(forResource: "VoiceRecordingWeb", withExtension: "m4a")!
+        let originalDuration = getM4aDuration(src: src)
+        let dest = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.ogg")
+        let dest2 = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.m4a")
         
         do {
-            try OGGConverter.convertM4aFileToOpusOGG(src: url, dest: destUrl)
-            XCTAssert(try destUrl.checkResourceIsReachable(), "destination ogg file does not exist")
+            try OGGConverter.convertM4aFileToOpusOGG(src: src, dest: dest)
+            XCTAssert(try dest.checkResourceIsReachable(), "destination ogg file does not exist")
         } catch {
             XCTAssert(false, "Failed to convert from m4a to ogg with error \(error)")
         }
         
         do {
-            try OGGConverter.convertOpusOGGToM4aFile(src: destUrl, dest: dest2Url)
-            XCTAssert(try dest2Url.checkResourceIsReachable(), "destination m4a file does not exist")
+            try OGGConverter.convertOpusOGGToM4aFile(src: dest, dest: dest2)
+            XCTAssert(try dest2.checkResourceIsReachable(), "destination m4a file does not exist")
         } catch {
             XCTAssert(false, "Failed to convert from ogg to m4a with error \(error)")
         }
+        let roundTripDuration = getM4aDuration(src: dest2)
+        XCTAssertEqual(originalDuration, roundTripDuration, "The duration after the round-trip conversion was not equal to the original file.")
+        
+    }
+    
+    private func getM4aDuration(src: URL) -> Int {
+        let audioAsset = AVURLAsset(url: src, options: nil)
+        let duration = audioAsset.duration
+        return Int(CMTimeGetSeconds(duration))
     }
 }
