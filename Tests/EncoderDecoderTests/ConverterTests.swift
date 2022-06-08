@@ -17,20 +17,25 @@
 import XCTest
 import SwiftOGG
 
-class EncoderTests: XCTestCase {
+class ConverterTests: XCTestCase {
 
-    func testConvertToM4a() {
-        let url = Bundle.module.url(forResource: "VoiceRecordingWeb", withExtension: "ogg")!
-        let dirPath = NSTemporaryDirectory() + "VoiceRecdingWebOut.m4a"
-        let destUrl = URL(fileURLWithPath: dirPath)
-        try! OGGConverter.convertOpusOGGToM4aFile(src: url, dest: destUrl)
-    }
-    
-    func testConvertToOGG() {
+    func testConversionRoundTrip() {
         let url = Bundle.module.url(forResource: "VoiceRecordingWeb", withExtension: "m4a")!
-        let dirPath = NSTemporaryDirectory() + "VoiceRecdingWebOut.ogg"
-        let destUrl = URL(fileURLWithPath: dirPath)
-        try! OGGConverter.convertM4aFileToOpusOGG(src: url, dest: destUrl)
+        let destUrl = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.ogg")
+        let dest2Url = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.m4a")
+        
+        do {
+            try OGGConverter.convertM4aFileToOpusOGG(src: url, dest: destUrl)
+            XCTAssert(try destUrl.checkResourceIsReachable(), "destination ogg file does not exist")
+        } catch {
+            XCTAssert(false, "Failed to convert from m4a to ogg with error \(error)")
+        }
+        
+        do {
+            try OGGConverter.convertOpusOGGToM4aFile(src: destUrl, dest: dest2Url)
+            XCTAssert(try dest2Url.checkResourceIsReachable(), "destination m4a file does not exist")
+        } catch {
+            XCTAssert(false, "Failed to convert from ogg to m4a with error \(error)")
+        }
     }
-
 }
