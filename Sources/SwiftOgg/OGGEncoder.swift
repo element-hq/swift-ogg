@@ -168,8 +168,6 @@ class OGGEncoder {
         try pcm.withUnsafeBytes { (bytes: UnsafePointer<Int16>) in
             try encode(pcm: bytes, count: pcm.count)
         }
-
-        // try encode(pcm: pcm.bytes, bytes: pcm.length)
     }
 
     internal func encode(pcm: UnsafePointer<Int16>, count: Int) throws {

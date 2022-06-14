@@ -17,9 +17,7 @@
 import Foundation
 import YbridOpus
 import YbridOgg
-#if canImport(Copustools)
 import Copustools
-#endif
 
 class OGGDecoder {
 

@@ -21,48 +21,64 @@ import AVFoundation
 public enum OGGConverterError: Error {
     case failedToCreateAVAudioChannelLayout
     case failedToCreatePCMBuffer
+    case other(Error)
 }
 
 public class OGGConverter {
 
     public static func convertOpusOGGToM4aFile(src: URL, dest: URL) throws {
-        let data = try Data(contentsOf: src)
-        let decoder = try OGGDecoder(audioData: data)
-        guard let layout = AVAudioChannelLayout(layoutTag: kAudioChannelLayoutTag_Mono) else { throw OGGConverterError.failedToCreateAVAudioChannelLayout }
-        let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: Double(decoder.sampleRate), interleaved: false, channelLayout: layout)
-        guard let buffer = decoder.pcmData.toPCMBuffer(format: format) else { throw OGGConverterError.failedToCreatePCMBuffer }
-        var settings: [String : Any] = [:]
+        do {
+            let data = try Data(contentsOf: src)
+            let decoder = try OGGDecoder(audioData: data)
+            guard let layout = AVAudioChannelLayout(layoutTag: kAudioChannelLayoutTag_Mono) else { throw OGGConverterError.failedToCreateAVAudioChannelLayout }
+            
+            let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: Double(decoder.sampleRate), interleaved: false, channelLayout: layout)
+            guard let buffer = decoder.pcmData.toPCMBuffer(format: format) else { throw OGGConverterError.failedToCreatePCMBuffer }
+            var settings: [String : Any] = [:]
 
-        settings[AVFormatIDKey] = kAudioFormatMPEG4AAC
-        settings[AVSampleRateKey] = buffer.format.sampleRate
-        settings[AVNumberOfChannelsKey] = 1
-        settings[AVLinearPCMIsFloatKey] = (buffer.format.commonFormat == .pcmFormatFloat32)
+            settings[AVFormatIDKey] = kAudioFormatMPEG4AAC
+            settings[AVSampleRateKey] = buffer.format.sampleRate
+            settings[AVNumberOfChannelsKey] = 1
+            settings[AVLinearPCMIsFloatKey] = (buffer.format.commonFormat == .pcmFormatFloat32)
 
-        let destFile = try AVAudioFile(forWriting: dest, settings: settings, commonFormat: buffer.format.commonFormat, interleaved: buffer.format.isInterleaved)
-        try destFile.write(from: buffer)
+            let destFile = try AVAudioFile(forWriting: dest, settings: settings, commonFormat: buffer.format.commonFormat, interleaved: buffer.format.isInterleaved)
+            try destFile.write(from: buffer)
+        } catch let error as OGGConverterError  {
+            throw error
+        } catch {
+            // wrap lower level errors
+            throw OGGConverterError.other(error)
+        }
     }
     
     public static func convertM4aFileToOpusOGG(src: URL, dest: URL) throws {
-        let srcFile = try AVAudioFile(
-            forReading: src,
-            commonFormat: .pcmFormatInt16,
-            interleaved: false
-        )
-        let format = srcFile.processingFormat
-        guard let buffer = AVAudioPCMBuffer(
-            pcmFormat: format,
-            frameCapacity: AVAudioFrameCount(srcFile.length)
-        ) else { throw OGGConverterError.failedToCreatePCMBuffer }
-        try srcFile.read(into: buffer)
-        let streamDescription = srcFile.processingFormat.streamDescription.pointee
-        let encoder = try OGGEncoder(format: streamDescription, opusRate: Int32(srcFile.processingFormat.sampleRate), application: .audio)
-        
-        let channels = UnsafeBufferPointer(start: buffer.int16ChannelData, count: 1)
-        let length = Int(buffer.frameCapacity * buffer.format.streamDescription.pointee.mBytesPerFrame)
-        let data = Data(bytes: channels[0], count: length)
-        try encoder.encode(pcm: data)
-        let opus = encoder.bitstream(flush: true)
-        try opus.write(to: dest)
+        do {
+            let srcFile = try AVAudioFile(
+                forReading: src,
+                commonFormat: .pcmFormatInt16,
+                interleaved: false
+            )
+            let format = srcFile.processingFormat
+            guard let buffer = AVAudioPCMBuffer(
+                pcmFormat: format,
+                frameCapacity: AVAudioFrameCount(srcFile.length)
+            ) else { throw OGGConverterError.failedToCreatePCMBuffer }
+            try srcFile.read(into: buffer)
+            let streamDescription = srcFile.processingFormat.streamDescription.pointee
+            let encoder = try OGGEncoder(format: streamDescription, opusRate: Int32(srcFile.processingFormat.sampleRate), application: .audio)
+            
+            let channels = UnsafeBufferPointer(start: buffer.int16ChannelData, count: 1)
+            let length = Int(buffer.frameCapacity * buffer.format.streamDescription.pointee.mBytesPerFrame)
+            let data = Data(bytes: channels[0], count: length)
+            try encoder.encode(pcm: data)
+            let opus = encoder.bitstream(flush: true)
+            try opus.write(to: dest)
+        } catch let error as OGGConverterError  {
+            throw error
+        } catch {
+            // wrap lower level errors
+            throw OGGConverterError.other(error)
+        }
     }
 }
 

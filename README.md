@@ -1,7 +1,7 @@
 # swift-ogg
-This library provides a very simple api to convert between `opus/ogg` and `MPEG4AAC/m4a` files.
+This library provides a very simple API to convert between `opus/ogg` and `MPEG4AAC/m4a` files.
 It uses opus's `libopus` `libogg` to convert between `opus/ogg` and linear PCM audio data and native iOS apis to convert between PCM and `MPEG4AAC/m4a`(but could be very easily adapted to use any other codec/container supported by iOS).
-Apples recording and playback apis form `AVFoundation` can then be used quite simply with a codec/container pair that iOS natively supports(`MPEG4AAC/m4a` in this case).
+Apple's recording and playback APIs from `AVFoundation` can then be used quite simply with a codec/container pair that iOS natively supports (`MPEG4AAC/m4a` in this case).
 
 # Usage
   ```swift
