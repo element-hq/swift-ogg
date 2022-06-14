@@ -14,17 +14,11 @@
  * limitations under the License.
  **/
 
-#if os(Linux)
-#else
-
 import Foundation
 import AudioToolbox
-#if canImport(Clibogg)
-import Clibogg
-#endif
-#if canImport(Clibopus)
-import Clibopus
-#endif
+import YbridOpus
+import YbridOgg
+
 
 class OGGEncoder {
 
@@ -466,4 +460,3 @@ internal enum Application {
     }
 }
 
-#endif

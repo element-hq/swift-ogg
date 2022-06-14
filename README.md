@@ -20,4 +20,5 @@ Apples recording and playback apis form `AVFoundation` can then be used quite si
 # Licence
 Portions of the swift-ogg library contain code derived from [watson-developer-cloud/swift-sdk](https://github.com/watson-developer-cloud/swift-sdk) under the Apache License 2.0
 
-Compiled versions of libopus and libogg are included and under the BSD Licence described [here](https://opus-codec.org/license/)
+This project makes use of [opus-swift](https://github.com/ybrid/opus-swift) and [ogg-swift](https://github.com/ybrid/ogg-swift) which package the source code of libopus and libogg as platform independend XCFrameworks.
+These two projects are under the MIT licence while the underlying libopus and libogg library source themselves are included under the BSD Licence described [here](https://opus-codec.org/license/)

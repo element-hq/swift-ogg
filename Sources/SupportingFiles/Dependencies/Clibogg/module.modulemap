@@ -1,5 +1,0 @@
-module Clibogg [system] {
-  header "/usr/local/opt/libogg/include/ogg/ogg.h"
-  link "ogg"
-  export *
-}

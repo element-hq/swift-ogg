@@ -15,15 +15,12 @@
  **/
 
 import Foundation
-#if canImport(Clibogg)
-import Clibogg
-#endif
-#if canImport(Clibopus)
-import Clibopus
-#endif
+import YbridOpus
+import YbridOgg
 #if canImport(Copustools)
 import Copustools
 #endif
+
 class OGGDecoder {
 
     var sampleRate: Int32 = 48000       // sample rate for decoding. default value by Opus is 48000

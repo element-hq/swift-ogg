@@ -9,11 +9,19 @@ let package = Package(
     products: [
         .library(name: "SwiftOGG", targets: ["SwiftOGG"]),
     ],
+    dependencies: [
+        .package(
+            name: "YbridOpus",
+            url: "https://github.com/ybrid/opus-swift.git",
+            from: "0.8.0"),
+        .package(
+            name: "YbridOgg",
+            url: "https://github.com/ybrid/ogg-swift.git",
+            from: "0.8.0")
+    ],
     targets: [
-        .systemLibrary(name: "Clibogg", path: "Sources/SupportingFiles/Dependencies/Clibogg", pkgConfig: "ogg", providers: [.brew(["libogg"])]),
-        .systemLibrary(name: "Clibopus", path: "Sources/SupportingFiles/Dependencies/Clibopus", pkgConfig: "opus", providers: [.brew(["opus"])]),
         .target(name: "Copustools", path: "Sources/SupportingFiles/Dependencies/Copustools"),
-        .target(name: "SwiftOGG", dependencies: ["Clibogg", "Clibopus", "Copustools"], path: "Sources/SwiftOGG"),
+        .target(name: "SwiftOGG", dependencies: ["YbridOpus", "YbridOgg", "Copustools"], path: "Sources/SwiftOGG"),
         .testTarget(name: "EncoderDecoderTests", dependencies: ["SwiftOGG"], resources: [.process("Resources")]),
     ]
 )
