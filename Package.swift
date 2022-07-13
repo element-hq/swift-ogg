@@ -12,12 +12,12 @@ let package = Package(
     dependencies: [
         .package(
             name: "YbridOpus",
-            url: "https://github.com/ybrid/opus-swift.git",
-            from: "0.8.0"),
+            url: "https://github.com/vector-im/opus-swift",
+            from: "0.8.1"),
         .package(
             name: "YbridOgg",
-            url: "https://github.com/ybrid/ogg-swift.git",
-            from: "0.8.0")
+            url: "https://github.com/vector-im/ogg-swift.git",
+            from: "0.8.1")
     ],
     targets: [
         .target(name: "Copustools", path: "Sources/SupportingFiles/Dependencies/Copustools"),
