@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "YbridOgg",
+        "repositoryURL": "https://github.com/vector-im/ogg-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "9d82ed838404f10b607a1a1689f404563e9115c3",
+          "version": "0.8.3"
+        }
+      },
+      {
+        "package": "YbridOpus",
+        "repositoryURL": "https://github.com/vector-im/opus-swift",
+        "state": {
+          "branch": null,
+          "revision": "11f1887767cbc87c4b64b789ee830b779cc744cb",
+          "version": "0.8.4"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

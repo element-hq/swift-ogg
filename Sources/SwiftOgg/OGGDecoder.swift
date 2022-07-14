@@ -64,7 +64,12 @@ class OGGDecoder {
         // initialize ogg sync state
         ogg_sync_init(&syncState)
         var processedByteCount = 0
-
+        
+        // deallocate pcmDataBuffer when the function ends, regardless if the function ended normally or with an error.
+        defer {
+            pcmDataBuffer.deallocate()
+        }
+        
         while processedByteCount < audioData.count {
             // determine the size of the buffer to ask for
             var bufferSize: Int
@@ -173,10 +178,6 @@ class OGGDecoder {
                 let capacity = MemoryLayout<Float>.stride * Int(MAX_FRAME_SIZE) * Int(numChannels)
                 pcmDataBuffer = UnsafeMutablePointer<Float>.allocate(capacity: capacity)
 
-                // deallocate pcmDataBuffer when the function ends, regardless if the function ended normally or with an error.
-                defer {
-                    pcmDataBuffer.deallocate()
-                }
             } else if packetCount == 1 {
                 hasTagsPacket = true
 
