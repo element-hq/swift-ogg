@@ -20,6 +20,8 @@ let package = Package(
             from: "0.8.3")
     ],
     targets: [
+        // To debug with a local framework
+//        .binaryTarget(name: "YbridOpus", path: "YbridOpus.xcframework"),
         .target(name: "Copustools", path: "Sources/SupportingFiles/Dependencies/Copustools"),
         .target(name: "SwiftOGG", dependencies: ["YbridOpus", "YbridOgg", "Copustools"], path: "Sources/SwiftOGG"),
         .testTarget(name: "EncoderDecoderTests", dependencies: ["SwiftOGG"], resources: [.process("Resources")]),
