@@ -48,6 +48,8 @@ class OGGDecoder {
     private var linkOut: Int32 = 0              // total number of bytes written from opus stream to pcmData
     private var numChannels: Int32 = 1          // number of channels
     private var pcmDataBuffer = UnsafeMutablePointer<Float>.allocate(capacity: 0) // decoded pcm float data
+    
+    private static let validSampleRates: [Int32] = [8000, 12000, 16000, 24000, 48000]
 
     init(audioData: Data) throws {
         // set properties
@@ -226,17 +228,28 @@ class OGGDecoder {
         channels = header.channels
         preskip = header.preskip
 
-        // update the sample rate if a reasonable one is specified in the header
-        let rate = Int32(header.input_sample_rate)
-        if rate >= 8000 && rate <= 192000 {
-            sampleRate = rate
-        }
+        // update the sample rate choosing closest valid value to that present in the header.
+        sampleRate = Self.getClosestValidSampleRate(inputRate: Int32(header.input_sample_rate))
 
-        decoder = opus_multistream_decoder_create(sampleRate, channels, header.nb_streams, header.nb_coupled, &header.stream_map.0, &status)
+        var newDecoder: opus_decoder? = opus_multistream_decoder_create(sampleRate, channels, header.nb_streams, header.nb_coupled, &header.stream_map.0, &status)
+        
         if status != OpusError.okay.rawValue {
             throw OpusError.badArgument
         }
+        
+        guard let newDecoder = newDecoder else {
+            throw OpusError.badArgument
+        }
+        
+        decoder = newDecoder
         return decoder
+    }
+    
+    static func getClosestValidSampleRate(inputRate: Int32) -> Int32 {
+        guard let closest = validSampleRates.enumerated().min(by: { abs($0.1 - inputRate) < abs($1.1 - inputRate)} ) else {
+            return inputRate
+        }
+        return closest.element
     }
 
     // Write the decoded Opus data (now PCM) to the pcmData object
