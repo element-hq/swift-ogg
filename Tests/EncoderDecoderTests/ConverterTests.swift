@@ -20,6 +20,17 @@ import AVFoundation
 
 class ConverterTests: XCTestCase {
 
+    func testInvalidSampleRate() {
+        let src = Bundle.module.url(forResource: "InvalidSampleRate", withExtension: "ogg")!
+        let dest = URL(fileURLWithPath: NSTemporaryDirectory() + "VoiceRecordingWebOut.m4a")
+        do {
+            try OGGConverter.convertOpusOGGToM4aFile(src: src, dest: dest)
+            XCTAssert(try dest.checkResourceIsReachable(), "destination m4a file does not exist")
+        } catch {
+            XCTFail("Failed to convert from ogg to m4a with error \(error)")
+        }
+    }
+    
     func testConversionRoundTrip() {
         let src = Bundle.module.url(forResource: "VoiceRecordingWeb", withExtension: "m4a")!
         let originalDuration = getM4aDuration(src: src)
@@ -30,14 +41,14 @@ class ConverterTests: XCTestCase {
             try OGGConverter.convertM4aFileToOpusOGG(src: src, dest: dest)
             XCTAssert(try dest.checkResourceIsReachable(), "destination ogg file does not exist")
         } catch {
-            XCTAssert(false, "Failed to convert from m4a to ogg with error \(error)")
+            XCTFail("Failed to convert from m4a to ogg with error \(error)")
         }
         
         do {
             try OGGConverter.convertOpusOGGToM4aFile(src: dest, dest: dest2)
             XCTAssert(try dest2.checkResourceIsReachable(), "destination m4a file does not exist")
         } catch {
-            XCTAssert(false, "Failed to convert from ogg to m4a with error \(error)")
+            XCTFail("Failed to convert from ogg to m4a with error \(error)")
         }
         let roundTripDuration = getM4aDuration(src: dest2)
         XCTAssertEqual(originalDuration, roundTripDuration, "The duration after the round-trip conversion was not equal to the original file.")
