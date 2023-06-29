@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Opus",
+        "repositoryURL": "https://github.com/alta/swift-opus",
+        "state": {
+          "branch": "main",
+          "revision": "7c89270e2aeace13595cd0f8f22141ad0e6e6ea4",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftOgg",
+        "repositoryURL": "https://github.com/vincentneo/SwiftOgg",
+        "state": {
+          "branch": null,
+          "revision": "1d0fc1b44c927c7cdc8e0ce56f382fd6bd945dc7",
+          "version": "1.3.5"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
