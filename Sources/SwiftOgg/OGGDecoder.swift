@@ -22,6 +22,7 @@ import Copustools
 class OGGDecoder {
 
     var sampleRate: Int32 = 48000       // sample rate for decoding. default value by Opus is 48000
+    var numChannels: Int32 = 1          // number of channels
     var pcmData = Data()                // decoded pcm data
     
     // swiftlint:disable:next type_name
@@ -46,7 +47,6 @@ class OGGDecoder {
     private var granOffset: Int32 = 0           // where to begin reading the data from Opus
     private var frameSize: Int32 = 0            // number of samples decoded
     private var linkOut: Int32 = 0              // total number of bytes written from opus stream to pcmData
-    private var numChannels: Int32 = 1          // number of channels
     private var pcmDataBuffer = UnsafeMutablePointer<Float>.allocate(capacity: 0) // decoded pcm float data
     
     private static let validSampleRates: [Int32] = [8000, 12000, 16000, 24000, 48000]
@@ -280,7 +280,7 @@ class OGGDecoder {
         floatOutput = pcmDataBuffer.advanced(by: Int(channels) * Int(tmpSkip))
         outLength = UInt(frameSize) - UInt(tmpSkip)
         if maxOut > 0 {
-            let bufferPointer = UnsafeBufferPointer(start: floatOutput, count: Int(outLength))
+            let bufferPointer = UnsafeBufferPointer(start: floatOutput, count: Int(outLength) * Int(channels))
             pcmData.append(bufferPointer)
             sampOut += Int64(outLength)
         }

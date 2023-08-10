@@ -30,15 +30,18 @@ public class OGGConverter {
         do {
             let data = try Data(contentsOf: src)
             let decoder = try OGGDecoder(audioData: data)
-            guard let layout = AVAudioChannelLayout(layoutTag: kAudioChannelLayoutTag_Mono) else { throw OGGConverterError.failedToCreateAVAudioChannelLayout }
+            let layoutTag = decoder.numChannels == 1
+                ? kAudioChannelLayoutTag_Mono
+                : kAudioChannelLayoutTag_Stereo
+            guard let layout = AVAudioChannelLayout(layoutTag: layoutTag) else { throw OGGConverterError.failedToCreateAVAudioChannelLayout }
             
-            let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: Double(decoder.sampleRate), interleaved: false, channelLayout: layout)
+            let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: Double(decoder.sampleRate), interleaved: true, channelLayout: layout)
             guard let buffer = decoder.pcmData.toPCMBuffer(format: format) else { throw OGGConverterError.failedToCreatePCMBuffer }
             var settings: [String : Any] = [:]
 
             settings[AVFormatIDKey] = kAudioFormatMPEG4AAC
             settings[AVSampleRateKey] = buffer.format.sampleRate
-            settings[AVNumberOfChannelsKey] = 1
+            settings[AVNumberOfChannelsKey] = buffer.format.channelCount
             settings[AVLinearPCMIsFloatKey] = (buffer.format.commonFormat == .pcmFormatFloat32)
 
             let destFile = try AVAudioFile(forWriting: dest, settings: settings, commonFormat: buffer.format.commonFormat, interleaved: buffer.format.isInterleaved)
