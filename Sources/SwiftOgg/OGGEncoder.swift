@@ -20,7 +20,7 @@ import YbridOpus
 import YbridOgg
 
 
-class OGGEncoder {
+public class OGGEncoder {
 
     // This implementation uses the libopus and libogg libraries to encode and encapsulate audio.
     // For more information about these libraries, refer to their online documentation.
@@ -40,7 +40,7 @@ class OGGEncoder {
     private var pcmCache = Data()          // cache for pcm audio that is too short to encode
     private var oggCache = Data()          // cache for ogg stream
 
-    convenience init(format: AudioStreamBasicDescription, opusRate: Int32, application: Application) throws {
+    public convenience init(format: AudioStreamBasicDescription, opusRate: Int32, application: Application) throws {
         try self.init(
             pcmRate: Int32(format.mSampleRate),
             pcmChannels: Int32(format.mChannelsPerFrame),
@@ -50,7 +50,7 @@ class OGGEncoder {
         )
     }
 
-    init(pcmRate: Int32, pcmChannels: Int32, pcmBytesPerFrame: UInt32, opusRate: Int32, application: Application) throws {
+    public init(pcmRate: Int32, pcmChannels: Int32, pcmBytesPerFrame: UInt32, opusRate: Int32, application: Application) throws {
         // avoid resampling
         guard pcmRate == opusRate else {
             print("Resampling is not supported. Please ensure that the PCM and Opus sample rates match.")
@@ -159,12 +159,12 @@ class OGGEncoder {
         assemblePages(flush: true)
     }
 
-    internal func encode(pcm: AudioQueueBuffer) throws {
+    public func encode(pcm: AudioQueueBuffer) throws {
         let pcmData = pcm.mAudioData.assumingMemoryBound(to: Int16.self)
         try encode(pcm: pcmData, count: Int(pcm.mAudioDataByteSize))
     }
 
-    internal func encode(pcm: Data) throws {
+    public func encode(pcm: Data) throws {
         try pcm.withUnsafeBytes { (bytes: UnsafePointer<Int16>) in
             try encode(pcm: bytes, count: pcm.count)
         }
@@ -274,7 +274,7 @@ class OGGEncoder {
         pcmCache = Data()
     }
 
-    internal func bitstream(flush: Bool = false, fillBytes: Int32? = nil) -> Data {
+    public func bitstream(flush: Bool = false, fillBytes: Int32? = nil) -> Data {
         assemblePages(flush: flush, fillBytes: fillBytes)
         let bitstream = oggCache
         oggCache = Data()
@@ -435,7 +435,7 @@ private enum ChannelMappingFamily: UInt8 {
 }
 
 // MARK: - Application
-internal enum Application {
+public enum Application {
     case voip
     case audio
     case lowDelay
