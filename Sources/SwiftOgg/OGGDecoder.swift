@@ -19,11 +19,11 @@ import YbridOpus
 import YbridOgg
 import Copustools
 
-class OGGDecoder {
+public class OGGDecoder {
 
     var sampleRate: Int32 = 48000       // sample rate for decoding. default value by Opus is 48000
     var numChannels: Int32 = 1          // number of channels
-    var pcmData = Data()                // decoded pcm data
+    public var pcmData = Data()         // decoded pcm data
     
     // swiftlint:disable:next type_name
     private typealias opus_decoder = OpaquePointer
@@ -51,7 +51,7 @@ class OGGDecoder {
     
     private static let validSampleRates: [Int32] = [8000, 12000, 16000, 24000, 48000]
 
-    init(audioData: Data) throws {
+    public init(audioData: Data) throws {
         // set properties
         streamState = ogg_stream_state()
         page = ogg_page()
