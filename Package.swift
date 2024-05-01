@@ -23,7 +23,7 @@ let package = Package(
         // To debug with a local framework
 //        .binaryTarget(name: "YbridOpus", path: "YbridOpus.xcframework"),
         .target(name: "Copustools", path: "Sources/SupportingFiles/Dependencies/Copustools"),
-        .target(name: "SwiftOGG", dependencies: ["YbridOpus", "YbridOgg", "Copustools"], path: "Sources/SwiftOGG"),
+        .target(name: "SwiftOGG", dependencies: ["YbridOpus", "YbridOgg", "Copustools"], path: "Sources/SwiftOgg"),
         .testTarget(name: "EncoderDecoderTests", dependencies: ["SwiftOGG"], resources: [.process("Resources")]),
     ]
 )
