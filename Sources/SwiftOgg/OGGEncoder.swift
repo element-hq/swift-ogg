@@ -87,7 +87,7 @@ public class OGGEncoder {
     }
 
     deinit {
-        // ogg_stream_destroy(&stream)
+        ogg_stream_clear(&stream);
         opus_encoder_destroy(encoder)
     }
 
